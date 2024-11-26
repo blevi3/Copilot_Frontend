@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { selectDirectory } from '../api';  // Import the API utility
+import { selectDirectory } from '../api';
 
 const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
     const [selectedDirectory, setSelectedDirectory] = useState('');
 
     const handleDirectorySelection = async () => {
-        const directory = await window.electron.openDirectory();  // Open directory via Electron dialog
+        const directory = await window.electron.openDirectory();
         setSelectedDirectory(directory);
 
         if (!directory) {
@@ -13,18 +13,15 @@ const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
             return;
         }
 
-        // Normalize the directory path (replace backslashes with forward slashes)
         const normalizedDirectory = directory.replace(/\\/g, '/');
 
-        // Update the selected directory path in the parent component state
         setDirectoryPath(normalizedDirectory);
 
         try {
-            // Send the directory path to the backend
             const response = await selectDirectory(normalizedDirectory);
 
             if (response.data.files) {
-                setFiles(response.data.files);  // Assuming the backend returns a list of files/folders
+                setFiles(response.data.files);
             } else {
                 alert('Failed to fetch files!');
             }

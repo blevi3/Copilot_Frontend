@@ -1,19 +1,20 @@
+// Chat.js
 import React, { useState } from 'react';
 import { askQuestion } from '../api';
-import './Chat.css'; // Assuming you will add the CSS for styles
+import './Chat.css';
 
-const Chat = ({ selectedFiles, directoryPath }) => {
+const Chat = ({ selectedFiles, directoryPath, sessionId }) => {
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const handleAskQuestion = async () => {
-        setLoading(true);  // Show loading spinner
+        setLoading(true);  
         setError(null);  // Reset error state
         try {
-            // You can use directoryPath here as needed, for example in the request body
-            const response = await askQuestion(question, selectedFiles, directoryPath);
+            // Pass sessionId to the askQuestion API request
+            const response = await askQuestion(question, selectedFiles, directoryPath, sessionId);
             setAnswer(response.data.answer);
         } catch (error) {
             console.error('Error asking question:', error);
