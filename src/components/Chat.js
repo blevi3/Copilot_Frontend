@@ -7,49 +7,45 @@ const Chat = ({ selectedFiles, directoryPath, sessionId }) => {
     const [answer, setAnswer] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [history, setHistory] = useState([]);  // State to store chat history
-    const chatContainerRef = useRef(null);  // Ref to handle auto-scrolling
+    const [history, setHistory] = useState([]);
+    const chatContainerRef = useRef(null);
 
-    // Fetch chat history whenever the sessionId changes
     useEffect(() => {
         const fetchHistory = async () => {
             try {
                 const response = await getChatHistory(sessionId);
-                setHistory(response.data.history);  // Set history to the state
+                setHistory(response.data.history);
             } catch (error) {
                 console.error('Error fetching chat history:', error);
             }
         };
 
         fetchHistory();
-    }, [sessionId]);  // Re-fetch history if sessionId changes
+    }, [sessionId]);
 
-    // Scroll to the bottom of the chat container whenever history or new messages change
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }, [history, answer]);  // Re-run on history or answer change
+    }, [history, answer]);
 
     const beautifyText = (text) => {
-        // Convert markdown-like syntax to HTML-like formatting
-        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  // Bold
-        text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');  // Bold (alternative syntax)
-        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');  // Italic
-        text = text.replace(/_(.*?)_/g, '<em>$1</em>');  // Italic (alternative syntax)
-        text = text.replace(/`(.*?)`/g, '<code>$1</code>');  // Inline code
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+        text = text.replace(/`(.*?)`/g, '<code>$1</code>');
         text = text.replace(/\n/g, '<br />');
         return text;
     };
 
     const handleAskQuestion = async () => {
         setLoading(true);
-        setError(null);  // Reset error state
+        setError(null);
         try {
             const response = await askQuestion(question, selectedFiles, directoryPath, sessionId);
-            setAnswer(beautifyText(response.data.answer));  // Beautify the answer text
+            setAnswer(beautifyText(response.data.answer));
 
-            // Update history state with new question and answer
             setHistory((prevHistory) => [
                 ...prevHistory,
                 { question, answer: beautifyText(response.data.answer) }
@@ -59,7 +55,7 @@ const Chat = ({ selectedFiles, directoryPath, sessionId }) => {
             console.error('Error asking question:', error);
             setError('There was an issue asking the question. Please try again.');
         } finally {
-            setLoading(false);  // Hide loading spinner after the request is complete
+            setLoading(false); 
         }
     };
 

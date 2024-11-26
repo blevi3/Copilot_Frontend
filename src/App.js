@@ -5,25 +5,24 @@ import Chat from './components/Chat';
 import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
-    const [files, setFiles] = useState([]); // Hierarchical file structure
+    const [files, setFiles] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [directoryPath, setDirectoryPath] = useState('');  // State to store the selected directory path
+    const [directoryPath, setDirectoryPath] = useState('');
     const [sessionId, setSessionId] = useState('');
 
     useEffect(() => {
-        // Check if a session ID exists in localStorage, otherwise create one
         let storedSessionId = localStorage.getItem('session_id');
         if (!storedSessionId) {
-            storedSessionId = uuidv4();  // Generate a new session ID if not found
-            localStorage.setItem('session_id', storedSessionId);  // Store it in localStorage
+            storedSessionId = uuidv4();
+            localStorage.setItem('session_id', storedSessionId);
         }
-        setSessionId(storedSessionId);  // Set the session ID
-    }, []); // Empty dependency array ensures this effect runs only once, on component mount
+        setSessionId(storedSessionId);
+    }, []);
 
     const startNewChat = () => {
-        const newSessionId = uuidv4(); // Generate a new session ID
-        localStorage.setItem('session_id', newSessionId); // Save it to localStorage
-        setSessionId(newSessionId); // Update the session ID state
+        const newSessionId = uuidv4();
+        localStorage.setItem('session_id', newSessionId);
+        setSessionId(newSessionId);
     };
 
     return (
@@ -31,7 +30,7 @@ const App = () => {
             <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
                 <DirectorySelector 
                     setFiles={setFiles} 
-                    setDirectoryPath={setDirectoryPath}  // Pass the setter function for the path
+                    setDirectoryPath={setDirectoryPath}
                 />
                 <Sidebar
                     files={files}
@@ -43,7 +42,7 @@ const App = () => {
                 <Chat 
                     selectedFiles={selectedFiles} 
                     directoryPath={directoryPath} 
-                    sessionId={sessionId}  // Pass the sessionId to the Chat component
+                    sessionId={sessionId}
                 />
                 <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px' }}>
                     Start New Chat

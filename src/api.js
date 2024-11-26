@@ -10,7 +10,7 @@ export const selectDirectory = (path) => api.post('/files/select-directory/', { 
 export const askQuestion = (question, selected_files, directoryPath, sessionId) => {
     try {
         const formattedFiles = selected_files.map((filePath) => {
-            const name = filePath.split('/').pop();  // Extract the file name from the path
+            const name = filePath.split('/').pop();
             return { name, path: filePath };
         });
 
@@ -18,22 +18,21 @@ export const askQuestion = (question, selected_files, directoryPath, sessionId) 
             question: question,
             selected_files: formattedFiles,
             directory_path: directoryPath,
-            session_id: sessionId,  // Include session ID in request
+            session_id: sessionId,
         });
 
-        return response;  // Return the full response
+        return response;
     } catch (error) {
         throw new Error('Failed to send question: ' + error.message);
     }
 };
 
-// New API function to fetch chat history
 export const getChatHistory = (sessionId) => {
     try {
         const response = api.get(`/chat/history/`, {
-            params: { session_id: sessionId }  // Pass session_id as a query parameter
+            params: { session_id: sessionId }
         });
-        return response;  // Return the response containing the chat history
+        return response;
     } catch (error) {
         throw new Error('Failed to fetch chat history: ' + error.message);
     }

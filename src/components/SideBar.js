@@ -4,7 +4,7 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
 
     const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__'];
-    const excludedExtensions = ['jpg', 'png'];
+    const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff'];
 
     const isExcluded = (item) => {
         if (item.type === 'folder') {
@@ -26,14 +26,14 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
 
     const toggleFileSelection = (item, basePath = '') => {
         const fullPath = `${basePath}${item.name}`;
-        if (isExcluded(item)) return; // Prevent any action on excluded files/directories
+        if (isExcluded(item)) return; 
 
         if (item.type === 'folder') {
-            const newSelectedFiles = new Set(selectedFiles); // Use a Set to avoid duplicates and simplify removal
+            const newSelectedFiles = new Set(selectedFiles);
 
             const handleSelection = (subItem, subPath = '') => {
                 const subFullPath = `${subPath}${subItem.name}`;
-                if (isExcluded(subItem)) return; // Skip excluded items
+                if (isExcluded(subItem)) return;
 
                 if (subItem.type === 'file') {
                     if (newSelectedFiles.has(subFullPath)) {
@@ -52,10 +52,8 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
             );
 
             if (folderSelected) {
-                // Unselect all files in the folder
                 item.children.forEach((child) => handleSelection(child, `${fullPath}/`));
             } else {
-                // Select all files in the folder
                 item.children.forEach((child) => handleSelection(child, `${fullPath}/`));
             }
 
@@ -73,7 +71,7 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
         return (
             <ul>
                 {items.map((item) => {
-                    if (isExcluded(item)) return null; // Skip excluded files/folders
+                    if (isExcluded(item)) return null;
 
                     const fullPath = `${basePath}${item.name}`;
                     const isSelected = selectedFiles.includes(fullPath);
