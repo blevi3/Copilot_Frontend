@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import DirectorySelector from './components/DirectorySelector';
+import Sidebar from './components/SideBar';
+import Chat from './components/Chat';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [files, setFiles] = useState([]); // Hierarchical file structure
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [directoryPath, setDirectoryPath] = useState('');  // State to store the selected directory path
+
+    return (
+        <div style={{ display: 'flex' }}>
+            <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
+                <DirectorySelector 
+                    setFiles={setFiles} 
+                    setDirectoryPath={setDirectoryPath}  // Pass the setter function for the path
+                />
+                <Sidebar
+                    files={files}
+                    selectedFiles={selectedFiles}
+                    setSelectedFiles={setSelectedFiles}
+                />
+            </div>
+            <div style={{ flex: 1, padding: '20px' }}>
+                <Chat selectedFiles={selectedFiles} directoryPath={directoryPath} /> {/* Pass directoryPath to Chat */}
+            </div>
+        </div>
+    );
+};
 
 export default App;
