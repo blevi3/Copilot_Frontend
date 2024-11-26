@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import DirectorySelector from './components/DirectorySelector';
 import Sidebar from './components/SideBar';
@@ -19,7 +18,13 @@ const App = () => {
             localStorage.setItem('session_id', storedSessionId);  // Store it in localStorage
         }
         setSessionId(storedSessionId);  // Set the session ID
-    }, []);
+    }, []); // Empty dependency array ensures this effect runs only once, on component mount
+
+    const startNewChat = () => {
+        const newSessionId = uuidv4(); // Generate a new session ID
+        localStorage.setItem('session_id', newSessionId); // Save it to localStorage
+        setSessionId(newSessionId); // Update the session ID state
+    };
 
     return (
         <div style={{ display: 'flex' }}>
@@ -40,6 +45,9 @@ const App = () => {
                     directoryPath={directoryPath} 
                     sessionId={sessionId}  // Pass the sessionId to the Chat component
                 />
+                <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px' }}>
+                    Start New Chat
+                </button>
             </div>
         </div>
     );

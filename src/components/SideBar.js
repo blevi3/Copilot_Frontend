@@ -3,6 +3,20 @@ import React, { useState } from 'react';
 const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
 
+    const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__'];
+    const excludedExtensions = ['jpg', 'png'];
+
+    const isExcluded = (item) => {
+        if (item.type === 'folder') {
+            return excludedDirs.includes(item.name);
+        }
+        if (item.type === 'file') {
+            const extension = item.name.split('.').pop().toLowerCase();
+            return excludedExtensions.includes(extension);
+        }
+        return false;
+    };
+
     const toggleFolder = (folder) => {
         setExpandedFolders((prev) => ({
             ...prev,
@@ -12,30 +26,40 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
 
     const toggleFileSelection = (item, basePath = '') => {
         const fullPath = `${basePath}${item.name}`;
+        if (isExcluded(item)) return; // Prevent any action on excluded files/directories
 
         if (item.type === 'folder') {
-            const newSelectedFiles = [...selectedFiles];
+            const newSelectedFiles = new Set(selectedFiles); // Use a Set to avoid duplicates and simplify removal
+
             const handleSelection = (subItem, subPath = '') => {
                 const subFullPath = `${subPath}${subItem.name}`;
-                if (!newSelectedFiles.includes(subFullPath)) {
-                    newSelectedFiles.push(subFullPath);
+                if (isExcluded(subItem)) return; // Skip excluded items
+
+                if (subItem.type === 'file') {
+                    if (newSelectedFiles.has(subFullPath)) {
+                        newSelectedFiles.delete(subFullPath);
+                    } else {
+                        newSelectedFiles.add(subFullPath);
+                    }
                 }
                 if (subItem.type === 'folder' && subItem.children) {
                     subItem.children.forEach((child) => handleSelection(child, `${subFullPath}/`));
                 }
             };
 
-            const folderSelected = item.children && item.children.every(child => selectedFiles.includes(`${fullPath}/${child.name}`));
-            
+            const folderSelected = item.children && item.children.every(
+                (child) => child.type === 'file' && selectedFiles.includes(`${fullPath}/${child.name}`)
+            );
+
             if (folderSelected) {
-                const newSelectedFiles = selectedFiles.filter((file) => !file.startsWith(fullPath));
-                setSelectedFiles(newSelectedFiles);
+                // Unselect all files in the folder
+                item.children.forEach((child) => handleSelection(child, `${fullPath}/`));
             } else {
-                if (item.children) {
-                    item.children.forEach((child) => handleSelection(child, `${fullPath}/`));
-                }
-                setSelectedFiles(newSelectedFiles);
+                // Select all files in the folder
+                item.children.forEach((child) => handleSelection(child, `${fullPath}/`));
             }
+
+            setSelectedFiles(Array.from(newSelectedFiles));
         } else {
             setSelectedFiles((prev) =>
                 prev.includes(fullPath)
@@ -49,6 +73,8 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
         return (
             <ul>
                 {items.map((item) => {
+                    if (isExcluded(item)) return null; // Skip excluded files/folders
+
                     const fullPath = `${basePath}${item.name}`;
                     const isSelected = selectedFiles.includes(fullPath);
 

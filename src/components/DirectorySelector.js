@@ -34,7 +34,6 @@ const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
     return (
         <div>
             <button onClick={handleDirectorySelection}>Select Directory</button>
-            {selectedDirectory && <p>Selected: {selectedDirectory}</p>}
         </div>
     );
 };

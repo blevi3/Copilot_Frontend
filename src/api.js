@@ -27,4 +27,16 @@ export const askQuestion = (question, selected_files, directoryPath, sessionId) 
     }
 };
 
+// New API function to fetch chat history
+export const getChatHistory = (sessionId) => {
+    try {
+        const response = api.get(`/chat/history/`, {
+            params: { session_id: sessionId }  // Pass session_id as a query parameter
+        });
+        return response;  // Return the response containing the chat history
+    } catch (error) {
+        throw new Error('Failed to fetch chat history: ' + error.message);
+    }
+};
+
 export default api;
