@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { selectDirectory } from '../api';
 
 const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
@@ -30,6 +30,25 @@ const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
             alert('Failed to fetch files!');
         }
     };
+
+    useEffect(() => {
+        if (selectedDirectory) {
+            const fetchFiles = async () => {
+                const normalizedDirectory = selectedDirectory.replace(/\\/g, '/');
+                try {
+                    const response = await selectDirectory(normalizedDirectory);
+                    if (response.data.files) {
+                        setFiles(response.data.files); // Refresh files after the directory is selected
+                    } else {
+                        alert('Failed to fetch files!');
+                    }
+                } catch (error) {
+                    console.error('Error fetching updated files:', error);
+                }
+            };
+            fetchFiles();
+        }
+    }, [selectedDirectory, setFiles]);
 
     return (
         <div>

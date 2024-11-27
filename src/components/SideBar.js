@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
 
-    const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__'];
-    const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff'];
+    const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__', 'migrations', '.git'];
+    const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff', 'env', 'config',  'woff2', 'ttf', 'eot', 'svg', 'ico', 'mp4', 'webm', 'wav', 'mp3', 'pdf', 'zip', 'rar', 'tar', 'gz', '7z', 'exe', 'pkg', 'deb', 'dmg', 'iso', 'img'];
 
     const isExcluded = (item) => {
         if (item.type === 'folder') {
@@ -84,7 +84,7 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
                                         style={{ cursor: 'pointer', fontWeight: 'bold' }}
                                         onClick={() => toggleFolder(fullPath)}
                                     >
-                                        {expandedFolders[fullPath] ? '📂' : '📁'} {item.name}
+                                        {expandedFolders[fullPath] ? '.' : '.'} {item.name}
                                     </span>
                                     <input
                                         type="checkbox"

@@ -10,6 +10,7 @@ const App = () => {
     const [directoryPath, setDirectoryPath] = useState('');
     const [sessionId, setSessionId] = useState('');
 
+
     useEffect(() => {
         let storedSessionId = localStorage.getItem('session_id');
         if (!storedSessionId) {
@@ -43,6 +44,7 @@ const App = () => {
                     selectedFiles={selectedFiles} 
                     directoryPath={directoryPath} 
                     sessionId={sessionId}
+                    setFiles={setFiles}
                 />
                 <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px' }}>
                     Start New Chat

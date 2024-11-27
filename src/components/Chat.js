@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { askQuestion, getChatHistory } from '../api';  // Import the new API call for history fetching
+import { askQuestion, getChatHistory } from '../api';
+import { selectDirectory } from '../api';
 import './Chat.css';
 
-const Chat = ({ selectedFiles, directoryPath, sessionId }) => {
+const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
     const [loading, setLoading] = useState(false);
@@ -50,6 +51,11 @@ const Chat = ({ selectedFiles, directoryPath, sessionId }) => {
                 ...prevHistory,
                 { question, answer: beautifyText(response.data.answer) }
             ]);
+
+            const updatedFilesResponse = await selectDirectory(directoryPath);
+            if (updatedFilesResponse.data.files) {
+                setFiles(updatedFilesResponse.data.files); // Refresh the file list
+            }
             setQuestion(""); 
         } catch (error) {
             console.error('Error asking question:', error);
