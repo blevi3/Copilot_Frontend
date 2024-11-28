@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: #121212; /* Dark background */
+  color: white; /* White text */
 }
 
 .App-logo {
@@ -14,18 +16,19 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #1e1e1e; /* Darker header */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align to top for better layout */
+  padding: 20px; /* Add padding for spacing */
   font-size: calc(10px + 2vmin);
   color: white;
 }
 
 .App-link {
-  color: #61dafb;
+  color: #61dafb; /* Light blue link color */
 }
 
 @keyframes App-logo-spin {
@@ -36,3 +39,7 @@
     transform: rotate(360deg);
   }
 }
+
+```
+
+```yaml

@@ -66,7 +66,7 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     };
 
     return (
-        <div className="chat-container">
+        <div className="chat-container" style={{ flex: 1 }}>
             <h2 className="chat-header">Ask a question</h2>
             <p className="directory-path">Selected directory: {directoryPath}</p>
 

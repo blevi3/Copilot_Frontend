@@ -51,8 +51,10 @@ const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
     }, [selectedDirectory, setFiles]);
 
     return (
-        <div>
-            <button onClick={handleDirectorySelection}>Select Directory</button>
+        <div style={{ marginBottom: '20px' }}> {/* Space below the button */}
+            <button onClick={handleDirectorySelection} style={{ backgroundColor: '#1e1e1e', color: '#ffffff', border: 'none', borderRadius: '4px', padding: '10px', cursor: 'pointer', transition: 'background-color 0.3s' }}>
+                Select Directory
+            </button>
         </div>
     );
 };

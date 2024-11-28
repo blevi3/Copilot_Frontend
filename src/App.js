@@ -10,7 +10,6 @@ const App = () => {
     const [directoryPath, setDirectoryPath] = useState('');
     const [sessionId, setSessionId] = useState('');
 
-
     useEffect(() => {
         let storedSessionId = localStorage.getItem('session_id');
         if (!storedSessionId) {
@@ -33,6 +32,9 @@ const App = () => {
                     setFiles={setFiles} 
                     setDirectoryPath={setDirectoryPath}
                 />
+                <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#1e1e1e', color: '#ffffff', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%' }}>
+                    Start New Chat
+                </button>
                 <Sidebar
                     files={files}
                     selectedFiles={selectedFiles}
@@ -46,9 +48,6 @@ const App = () => {
                     sessionId={sessionId}
                     setFiles={setFiles}
                 />
-                <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px' }}>
-                    Start New Chat
-                </button>
             </div>
         </div>
     );
