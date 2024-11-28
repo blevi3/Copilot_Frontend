@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getAllConversations, continueConversation } from '../api';
 
-const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
+const Sidebar = ({ files, selectedFiles, setSelectedFiles, setSessionId }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
+    const [conversations, setConversations] = useState([]);
+
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                const response = await getAllConversations();
+                setConversations(response.data.conversations); // Adjust based on the API response format
+            } catch (error) {
+                console.error("Failed to fetch conversations:", error);
+            }
+        };
+
+        fetchConversations();
+    }, []);
 
     const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__', 'migrations', '.git'];
-    const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff', 'env', 'config',  'woff2', 'ttf', 'eot', 'svg', 'ico', 'mp4', 'webm', 'wav', 'mp3', 'pdf', 'zip', 'rar', 'tar', 'gz', '7z', 'exe', 'pkg', 'deb', 'dmg', 'iso', 'img'];
+    const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff', 'env', 'config', 'woff2', 'ttf', 'eot', 'svg', 'ico', 'mp4', 'webm', 'wav', 'mp3', 'pdf', 'zip', 'rar', 'tar', 'gz', '7z', 'exe', 'pkg', 'deb', 'dmg', 'iso', 'img'];
 
     const isExcluded = (item) => {
         if (item.type === 'folder') {
@@ -26,7 +41,7 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
 
     const toggleFileSelection = (item, basePath = '') => {
         const fullPath = `${basePath}${item.name}`;
-        if (isExcluded(item)) return; 
+        if (isExcluded(item)) return;
 
         if (item.type === 'folder') {
             const newSelectedFiles = new Set(selectedFiles);
@@ -84,7 +99,7 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
                                         style={{ cursor: 'pointer', fontWeight: 'bold' }}
                                         onClick={() => toggleFolder(fullPath)}
                                     >
-                                        {expandedFolders[fullPath] ? '.' : '.'} {item.name}
+                                        {expandedFolders[fullPath] ? '-' : '+'} {item.name}
                                     </span>
                                     <input
                                         type="checkbox"
@@ -110,12 +125,25 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles }) => {
             </ul>
         );
     };
+    
 
     return (
-        <div>
-            <h3>Files</h3>
-            {renderFiles(files)}
-        </div>
+        <>
+            <div>
+                <h3>Files</h3>
+                {renderFiles(files)}
+            </div>
+            <div>
+                <h3>Conversations</h3>
+                <ul>
+                    {conversations.map((sessionId) => (
+                        <li key={sessionId} style={{ cursor: 'pointer' }} onClick={() => setSessionId(sessionId)}>
+                            {sessionId}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </>
     );
 };
 

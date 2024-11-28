@@ -1,4 +1,3 @@
-// api.js
 import axios from 'axios';
 
 const api = axios.create({
@@ -27,9 +26,9 @@ export const askQuestion = (question, selected_files, directoryPath, sessionId) 
     }
 };
 
-export const getChatHistory = (sessionId) => {
+export const getChatHistory = async (sessionId) => {
     try {
-        const response = api.get(`/chat/history/`, {
+        const response = await api.get(`/chat/history/`, {
             params: { session_id: sessionId }
         });
         return response;
@@ -37,5 +36,10 @@ export const getChatHistory = (sessionId) => {
         throw new Error('Failed to fetch chat history: ' + error.message);
     }
 };
+
+
+export const getAllConversations = () => api.get('/chat/conversations/');
+
+export const continueConversation = (sessionId) => api.get(`/chat/continue-conversation/${sessionId}/`);
 
 export default api;

@@ -13,14 +13,15 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
 
     useEffect(() => {
         const fetchHistory = async () => {
+            if (!sessionId) return;
             try {
                 const response = await getChatHistory(sessionId);
-                setHistory(response.data.history);
+                setHistory(response.data.history || []);
             } catch (error) {
                 console.error('Error fetching chat history:', error);
             }
         };
-
+    
         fetchHistory();
     }, [sessionId]);
 

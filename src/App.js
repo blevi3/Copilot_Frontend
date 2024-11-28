@@ -39,6 +39,10 @@ const App = () => {
                     files={files}
                     selectedFiles={selectedFiles}
                     setSelectedFiles={setSelectedFiles}
+                    setSessionId={setSessionId}
+                    setDirectoryPath={setDirectoryPath}
+                    
+
                 />
             </div>
             <div style={{ flex: 1, padding: '20px' }}>
