@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getAllConversations, continueConversation } from '../api';
+import { getAllConversations, getChatHistory, selectDirectory } from '../api';
 
-const Sidebar = ({ files, selectedFiles, setSelectedFiles, setSessionId }) => {
+const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionId, setDirectoryPath }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
     const [conversations, setConversations] = useState([]);
 
@@ -17,6 +17,29 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles, setSessionId }) => {
 
         fetchConversations();
     }, []);
+
+    const handleConversationSelect = async (sessionId) => {
+        try {
+            const response = await getChatHistory(sessionId);
+            const history = response.data.history;
+
+            if (history.length > 0) {
+                const directoryPath = history[0].path; // Assume all entries in a session use the same path
+                setDirectoryPath(directoryPath); // Update the directory path in state
+
+                const directoryResponse = await selectDirectory(directoryPath); // Fetch directory structure
+                if (directoryResponse.data.files) {
+                    setFiles(directoryResponse.data.files); // Update the files state for the sidebar
+                } else {
+                    alert("Failed to load directory structure!");
+                }
+            }
+            setSessionId(sessionId); // Update the selected session ID
+        } catch (error) {
+            console.error("Error loading conversation:", error);
+        }
+    };
+    
 
     const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__', 'migrations', '.git'];
     const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff', 'env', 'config', 'woff2', 'ttf', 'eot', 'svg', 'ico', 'mp4', 'webm', 'wav', 'mp3', 'pdf', 'zip', 'rar', 'tar', 'gz', '7z', 'exe', 'pkg', 'deb', 'dmg', 'iso', 'img'];
@@ -126,7 +149,22 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles, setSessionId }) => {
         );
     };
     
-
+    const renderConversations = () => (
+        <ul>
+            {conversations
+            .slice()
+            .reverse()
+            .map((sessionId) => (
+                <li
+                    key={sessionId}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleConversationSelect(sessionId)}
+                >
+                    {sessionId}
+                </li>
+            ))}
+        </ul>
+    );
     return (
         <>
             <div>
@@ -135,13 +173,8 @@ const Sidebar = ({ files, selectedFiles, setSelectedFiles, setSessionId }) => {
             </div>
             <div>
                 <h3>Conversations</h3>
-                <ul>
-                    {conversations.map((sessionId) => (
-                        <li key={sessionId} style={{ cursor: 'pointer' }} onClick={() => setSessionId(sessionId)}>
-                            {sessionId}
-                        </li>
-                    ))}
-                </ul>
+                {renderConversations()}
+
             </div>
         </>
     );

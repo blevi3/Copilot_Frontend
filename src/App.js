@@ -37,6 +37,7 @@ const App = () => {
                 </button>
                 <Sidebar
                     files={files}
+                    setFiles={setFiles}
                     selectedFiles={selectedFiles}
                     setSelectedFiles={setSelectedFiles}
                     setSessionId={setSessionId}

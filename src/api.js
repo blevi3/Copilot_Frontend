@@ -40,6 +40,4 @@ export const getChatHistory = async (sessionId) => {
 
 export const getAllConversations = () => api.get('/chat/conversations/');
 
-export const continueConversation = (sessionId) => api.get(`/chat/continue-conversation/${sessionId}/`);
-
 export default api;
