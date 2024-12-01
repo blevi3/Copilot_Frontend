@@ -20,7 +20,7 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
             if (!sessionId) return;
             try {
                 const response = await getChatHistory(sessionId);
-                setHistory(response.data.history || []);
+                setHistory(Array.isArray(response.data.history) ? response.data.history : []);
             } catch (error) {
                 console.error('Error fetching chat history:', error);
             }
@@ -43,22 +43,23 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     };
 
     const renderAnswer = (text) => {
+        if (!text) return null;
+        
         const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
         const parts = [];
         let lastIndex = 0;
         let match;
-
+    
         while ((match = codeBlockRegex.exec(text)) !== null) {
             const [fullMatch, language, code] = match;
             const index = match.index;
-
+    
             if (lastIndex < index) {
                 parts.push(
                     <span key={`text-${lastIndex}`}>{text.slice(lastIndex, index)}</span>
                 );
             }
-
-
+    
             parts.push(
                 <div key={`code-${index}`} style={{ position: 'relative' }}>
                     <SyntaxHighlighter
@@ -91,16 +92,16 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
                     </button>
                 </div>
             );
-
+    
             lastIndex = index + fullMatch.length;
         }
-
+    
         if (lastIndex < text.length) {
             parts.push(
                 <span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>
             );
         }
-
+    
         return parts;
     };
 
@@ -206,5 +207,4 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
         </div>
     );
 };
-
 export default Chat;

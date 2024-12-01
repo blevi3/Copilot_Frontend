@@ -52,6 +52,7 @@ const App = () => {
                     directoryPath={directoryPath} 
                     sessionId={sessionId}
                     setFiles={setFiles}
+                    
                 />
             </div>
         </div>
