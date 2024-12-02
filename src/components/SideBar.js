@@ -9,7 +9,7 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
         const fetchConversations = async () => {
             try {
                 const response = await getAllConversations();
-                setConversations(response.data.conversations); // Adjust based on the API response format
+                setConversations(response.data.conversations); // Includes session_id and chat_name
             } catch (error) {
                 console.error("Failed to fetch conversations:", error);
             }
@@ -154,17 +154,19 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
             {conversations
             .slice()
             .reverse()
-            .map((sessionId) => (
+            .map((conversation) => (
                 <li
-                    key={sessionId}
+                    key={conversation.session_id}
                     style={{ cursor: 'pointer' }}
-                    onClick={() => handleConversationSelect(sessionId)}
+                    onClick={() => handleConversationSelect(conversation.session_id)}
                 >
-                    {sessionId}
+                    {conversation.chat_name}
                 </li>
             ))}
-        </ul>
+    </ul>
+    
     );
+    
     return (
         <>
             <div>
