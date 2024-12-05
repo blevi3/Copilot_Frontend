@@ -40,3 +40,10 @@
   }
 }
 
+/* Suggestion: Add better responsive design for mobile and small screens */
+@media (max-width: 768px) {
+  .App-header {
+    font-size: calc(8px + 2vmin); /* Reduce font size on smaller screens */
+    padding: 10px; /* Decrease padding for compact layout */
+  }
+}

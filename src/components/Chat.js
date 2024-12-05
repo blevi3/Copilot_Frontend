@@ -38,28 +38,28 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     const copyToClipboard = (code, setCopied) => {
         navigator.clipboard.writeText(code).then(() => {
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000); // Reset button to "Copy" after 2 seconds
+            setTimeout(() => setCopied(false), 2000);
         });
     };
 
     const renderAnswer = (text) => {
         if (!text) return null;
-        
+
         const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
         const parts = [];
         let lastIndex = 0;
         let match;
-    
+
         while ((match = codeBlockRegex.exec(text)) !== null) {
             const [fullMatch, language, code] = match;
             const index = match.index;
-    
+
             if (lastIndex < index) {
                 parts.push(
                     <span key={`text-${lastIndex}`}>{text.slice(lastIndex, index)}</span>
                 );
             }
-    
+
             parts.push(
                 <div key={`code-${index}`} style={{ position: 'relative' }}>
                     <SyntaxHighlighter
@@ -92,21 +92,21 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
                     </button>
                 </div>
             );
-    
+
             lastIndex = index + fullMatch.length;
         }
-    
+
         if (lastIndex < text.length) {
             parts.push(
                 <span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>
             );
         }
-    
+
         return parts;
     };
 
     const handleAskQuestion = async () => {
-        if (!question.trim()) return; // Avoid submitting empty questions
+        if (!question.trim()) return;
         setLoading(true);
         setError(null);
         try {
@@ -121,7 +121,7 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
 
             const updatedFilesResponse = await selectDirectory(directoryPath);
             if (updatedFilesResponse.data.files) {
-                setFiles(updatedFilesResponse.data.files); // Refresh the file list
+                setFiles(updatedFilesResponse.data.files);
             }
             setQuestion('');
         } catch (error) {
@@ -135,11 +135,10 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     const handleInputChange = (e) => {
         setQuestion(e.target.value);
 
-        // Dynamically adjust height of the textarea
         const textarea = questionInputRef.current;
         if (textarea) {
-            textarea.style.height = 'auto'; // Reset height to calculate the new height
-            textarea.style.height = `${Math.min(textarea.scrollHeight, 96)}px`; // Max height for 4 lines
+            textarea.style.height = 'auto';
+            textarea.style.height = `${Math.min(textarea.scrollHeight, 96)}px`;
         }
     };
 
@@ -188,14 +187,14 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
                     style={{
                         width: '100%',
                         resize: 'none',
-                        overflow: 'auto', // Allow scroll for long queries
+                        overflow: 'auto',
                         fontSize: '16px',
                         padding: '10px',
                         border: '1px solid #ccc',
                         borderRadius: '5px',
                         outline: 'none',
                         lineHeight: '1.5',
-                        maxHeight: '96px', // Limit height to 4 lines
+                        maxHeight: '96px',
                     }}
                 />
                 <button onClick={handleAskQuestion} className="ask-button" disabled={loading}>

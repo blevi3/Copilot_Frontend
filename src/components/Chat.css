@@ -21,6 +21,12 @@
     padding-bottom: 10px; /* Padding below header */
 }
 
+.directory-path {
+    font-size: 14px;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+
 /* Message container */
 .history-container {
     max-height: 400px;
@@ -123,5 +129,3 @@ em {
 .history-entry p {
     margin: 5px 0;
 }
-
-
