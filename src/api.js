@@ -40,4 +40,9 @@ export const getChatHistory = async (sessionId) => {
 
 export const getAllConversations = () => api.get('/chat/conversations/');
 
+export const getModifiedFiles = () => api.get('/files/modified-files/');
+
+export const revertFile = (filePath) =>{
+    api.post(`/files/revert-file/?file_path=${encodeURIComponent(filePath)}`);
+}
 export default api;

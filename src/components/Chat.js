@@ -4,6 +4,7 @@ import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { askQuestion, getChatHistory } from '../api';
 import { selectDirectory } from '../api';
 import './Chat.css';
+import MarkdownIt from 'markdown-it';
 
 const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     const [question, setQuestion] = useState('');
@@ -35,7 +36,7 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
         }
     }, [history, answer]);
 
-    const copyToClipboard = (code, setCopied) => {
+    const copyToClipboard = (code) => {
         navigator.clipboard.writeText(code).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -45,64 +46,18 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
     const renderAnswer = (text) => {
         if (!text) return null;
 
-        const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-        const parts = [];
-        let lastIndex = 0;
-        let match;
-
-        while ((match = codeBlockRegex.exec(text)) !== null) {
-            const [fullMatch, language, code] = match;
-            const index = match.index;
-
-            if (lastIndex < index) {
-                parts.push(
-                    <span key={`text-${lastIndex}`}>{text.slice(lastIndex, index)}</span>
+        const md = new MarkdownIt({
+            highlight: (code, lang) => {
+                return (
+                    `<pre style="background: #2d2d2d; border-radius: 8px; padding: 10px; overflow-x: auto;">
+                        <code class="hljs ${lang}">${code}</code>
+                     </pre>`
                 );
-            }
+            },
+        });
 
-            parts.push(
-                <div key={`code-${index}`} style={{ position: 'relative' }}>
-                    <SyntaxHighlighter
-                        language={language || 'plaintext'}
-                        style={dracula}
-                        customStyle={{
-                            backgroundColor: '#2d2d2d',
-                            color: '#ffffff',
-                            borderRadius: '8px',
-                            padding: '10px',
-                        }}
-                    >
-                        {code.trim()}
-                    </SyntaxHighlighter>
-                    <button
-                        onClick={() => copyToClipboard(code.trim(), setCopied)}
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            backgroundColor: '#444',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '5px',
-                            padding: '5px 10px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {copied ? 'Copied' : 'Copy'}
-                    </button>
-                </div>
-            );
-
-            lastIndex = index + fullMatch.length;
-        }
-
-        if (lastIndex < text.length) {
-            parts.push(
-                <span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>
-            );
-        }
-
-        return parts;
+        const rawHtml = md.render(text);
+        return <div dangerouslySetInnerHTML={{ __html: rawHtml }} />;
     };
 
     const handleAskQuestion = async () => {
@@ -206,4 +161,5 @@ const Chat = ({ selectedFiles, directoryPath, sessionId, setFiles }) => {
         </div>
     );
 };
+
 export default Chat;

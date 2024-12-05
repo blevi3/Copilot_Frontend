@@ -1,9 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { getAllConversations, getChatHistory, selectDirectory } from '../api';
+import { getAllConversations, getChatHistory, selectDirectory, getModifiedFiles, revertFile } from '../api';
 
 const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionId, setDirectoryPath }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
     const [conversations, setConversations] = useState([]);
+    const [modifiedFiles, setModifiedFiles] = useState([]);
+
+    useEffect(() => {
+        const fetchModifiedFiles = async () => {
+            try {
+                const response = await getModifiedFiles();
+                setModifiedFiles(response.data);
+            } catch (error) {
+                console.error("Failed to fetch modified files:", error);
+            }
+        };
+    
+        fetchModifiedFiles();
+    }, []);
+
+    const revert = async (filePath) => {
+        try {
+            await revertFile(filePath );
+            setModifiedFiles(modifiedFiles.filter(file => file.file_path !== filePath));
+            alert("File reverted successfully!");
+        } catch (error) {
+            console.error("Failed to revert file:", error);
+            alert("Failed to revert file!");
+        }
+    };
+
+    const renderModifiedFiles = () => (
+        <ul>
+            {modifiedFiles.map(file => (
+                <li key={file.file_path}>
+                    {file.file_path} - Last Modified: {new Date(file.last_modified).toLocaleString()}
+                    <button onClick={() => revert(file.file_path)}>Revert</button>
+                </li>
+            ))}
+        </ul>
+    );
+
 
     useEffect(() => {
         const fetchConversations = async () => {
@@ -172,6 +209,10 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
             <div>
                 <h3>Files</h3>
                 {renderFiles(files)}
+            </div>
+            <div>
+                <h3>Modified Files</h3>
+                {renderModifiedFiles()}
             </div>
             <div>
                 <h3>Conversations</h3>
