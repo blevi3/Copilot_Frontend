@@ -40,7 +40,11 @@ export const getChatHistory = async (sessionId) => {
 
 export const getAllConversations = () => api.get('/chat/conversations/');
 
-export const getModifiedFiles = () => api.get('/files/modified-files/');
+export const getModifiedFiles = async (directoryPath) => {
+    const response = await api.get('/files/modified-files/', { params: { directory: directoryPath } });
+    return response;
+
+}
 
 export const revertFile = (filePath) =>{
     api.post(`/files/revert-file/?file_path=${encodeURIComponent(filePath)}`);

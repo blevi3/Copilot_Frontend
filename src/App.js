@@ -42,7 +42,7 @@ const App = () => {
                     setSelectedFiles={setSelectedFiles}
                     setSessionId={setSessionId}
                     setDirectoryPath={setDirectoryPath}
-                    
+                    directoryPath={directoryPath}
 
                 />
             </div>

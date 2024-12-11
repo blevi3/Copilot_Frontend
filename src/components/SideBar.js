@@ -1,23 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { getAllConversations, getChatHistory, selectDirectory, getModifiedFiles, revertFile } from '../api';
 
-const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionId, setDirectoryPath }) => {
+const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionId, setDirectoryPath, directoryPath }) => {
     const [expandedFolders, setExpandedFolders] = useState({});
     const [conversations, setConversations] = useState([]);
     const [modifiedFiles, setModifiedFiles] = useState([]);
+    const [showModifiedFiles, setShowModifiedFiles] = useState(true);
+    const [showConversations, setShowConversations] = useState(true);
+
+    const directoryPathRef = useRef(directoryPath);
+
+    // Update the ref whenever directoryPath changes
+    useEffect(() => {
+        directoryPathRef.current = directoryPath;
+    }, [directoryPath]);
+
+    const fetchModifiedFiles = async () => {
+        try {
+            console.log("fetch", directoryPathRef.current);
+            const response = await getModifiedFiles(directoryPathRef.current);
+            setModifiedFiles(response.data);
+        } catch (error) {
+            console.error("Failed to fetch modified files:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchModifiedFiles = async () => {
-            try {
-                const response = await getModifiedFiles();
-                setModifiedFiles(response.data);
-            } catch (error) {
-                console.error("Failed to fetch modified files:", error);
+        let pollingInterval;
+
+        const startPolling = () => {
+            fetchModifiedFiles(); // Fetch initially
+            pollingInterval = setInterval(fetchModifiedFiles, 5000); // Poll every 5 seconds
+        };
+
+        const stopPolling = () => {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
             }
         };
-    
-        fetchModifiedFiles();
+
+        startPolling();
+
+        return () => stopPolling(); // Cleanup on unmount
     }, []);
+    
 
     const revert = async (filePath) => {
         try {
@@ -34,7 +60,7 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
         <ul>
             {modifiedFiles.map(file => (
                 <li key={file.file_path}>
-                    {file.file_path} - Last Modified: {new Date(file.last_modified).toLocaleString()}
+                    {file.file_path}
                     <button onClick={() => revert(file.file_path)}>Revert</button>
                 </li>
             ))}
@@ -59,10 +85,11 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
         try {
             const response = await getChatHistory(sessionId);
             const history = response.data.history;
-
+            console.log("directoryPath", history[0].path);
+            setDirectoryPath(history[0].path);
             if (history.length > 0) {
                 const directoryPath = history[0].path; // Assume all entries in a session use the same path
-                setDirectoryPath(directoryPath); // Update the directory path in state
+                setDirectoryPath(history[0].path); // Update the directory path in state
 
                 const directoryResponse = await selectDirectory(directoryPath); // Fetch directory structure
                 if (directoryResponse.data.files) {
@@ -210,15 +237,16 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
                 <h3>Files</h3>
                 {renderFiles(files)}
             </div>
-            <div>
-                <h3>Modified Files</h3>
-                {renderModifiedFiles()}
-            </div>
-            <div>
-                <h3>Conversations</h3>
-                {renderConversations()}
+                       <h3 onClick={() => setShowModifiedFiles(prev => !prev)}>
+                {showModifiedFiles ? 'Hide' : 'Show'} Modified Files
+            </h3>
+            {showModifiedFiles && renderModifiedFiles()}
+            
+            <h3 onClick={() => setShowConversations(prev => !prev)}>
+                {showConversations ? 'Hide' : 'Show'} Conversations
+            </h3>
+            {showConversations && renderConversations()}
 
-            </div>
         </>
     );
 };
