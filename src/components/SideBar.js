@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getAllConversations, getChatHistory, selectDirectory, getModifiedFiles, revertFile } from '../api';
 
 const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionId, setDirectoryPath, directoryPath }) => {
@@ -43,11 +43,10 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
 
         return () => stopPolling(); // Cleanup on unmount
     }, []);
-    
 
     const revert = async (filePath) => {
         try {
-            await revertFile(filePath );
+            await revertFile(filePath);
             setModifiedFiles(modifiedFiles.filter(file => file.file_path !== filePath));
             alert("File reverted successfully!");
         } catch (error) {
@@ -57,16 +56,42 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
     };
 
     const renderModifiedFiles = () => (
-        <ul>
+        <ul style={{ listStyleType: 'none', paddingLeft: '10px' }}>
             {modifiedFiles.map(file => (
-                <li key={file.file_path}>
-                    {file.file_path}
-                    <button onClick={() => revert(file.file_path)}>Revert</button>
+                <li key={file.file_path} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 0', overflow: 'hidden' }}>
+                    <span
+                        title={file.file_path}
+                        style={{
+                            flex: 1,
+                            marginRight: '10px',
+                            whiteSpace: 'normal',  // Allow text to wrap
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            wordBreak: 'break-word',  // Ensure long words break
+                            paddingRight: '10px',  // Add padding for spacing
+                        }}
+                    >
+                        {file.file_path}
+                    </span>
+                    <button
+                        style={{
+                            backgroundColor: '#444',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '5px',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                        }}
+                        onClick={() => revert(file.file_path)}
+                    >
+                        Revert
+                    </button>
                 </li>
             ))}
         </ul>
     );
-
+    
 
     useEffect(() => {
         const fetchConversations = async () => {
@@ -103,7 +128,6 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
             console.error("Error loading conversation:", error);
         }
     };
-    
 
     const excludedDirs = ['venv', 'virtualenv', 'node_modules', '__pycache__', 'migrations', '.git'];
     const excludedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'sqlite3', 'woff', 'env', 'config', 'woff2', 'ttf', 'eot', 'svg', 'ico', 'mp4', 'webm', 'wav', 'mp3', 'pdf', 'zip', 'rar', 'tar', 'gz', '7z', 'exe', 'pkg', 'deb', 'dmg', 'iso', 'img'];
@@ -171,7 +195,7 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
 
     const renderFiles = (items, basePath = '') => {
         return (
-            <ul>
+            <ul style={{ listStyleType: 'none', paddingLeft: '10px' }}>
                 {items.map((item) => {
                     if (isExcluded(item)) return null;
 
@@ -179,17 +203,18 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
                     const isSelected = selectedFiles.includes(fullPath);
 
                     return (
-                        <li key={fullPath}>
+                        <li key={fullPath} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {item.type === 'folder' ? (
                                 <>
                                     <span
-                                        style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                                        style={{ cursor: 'pointer', fontWeight: 'bold', color: '#ddd' }}
                                         onClick={() => toggleFolder(fullPath)}
                                     >
                                         {expandedFolders[fullPath] ? '-' : '+'} {item.name}
                                     </span>
                                     <input
                                         type="checkbox"
+                                        style={{ marginLeft: '5px' }}
                                         checked={isSelected}
                                         onChange={() => toggleFileSelection(item, basePath)}
                                     />
@@ -200,10 +225,11 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
                                 <>
                                     <input
                                         type="checkbox"
+                                        style={{ marginRight: '5px' }}
                                         checked={isSelected}
                                         onChange={() => toggleFileSelection(item, basePath)}
                                     />
-                                    {item.name}
+                                    <span title={item.name}>{item.name}</span>
                                 </>
                             )}
                         </li>
@@ -212,42 +238,40 @@ const Sidebar = ({ files, setFiles, selectedFiles, setSelectedFiles, setSessionI
             </ul>
         );
     };
-    
+
     const renderConversations = () => (
-        <ul>
+        <ul style={{ listStyleType: 'none', paddingLeft: '10px', overflow: 'auto', maxHeight: '300px' }}>
             {conversations
             .slice()
             .reverse()
             .map((conversation) => (
                 <li
                     key={conversation.session_id}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', color: '#ccc', padding: '5px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     onClick={() => handleConversationSelect(conversation.session_id)}
                 >
                     {conversation.chat_name}
                 </li>
             ))}
-    </ul>
-    
+        </ul>
     );
-    
+
     return (
-        <>
+        <div style={{ backgroundColor: '#333', color: '#fff', padding: '15px', overflow: 'hidden', height: '100%', width: '300px', borderRight: '1px solid #444' }}>
             <div>
                 <h3>Files</h3>
                 {renderFiles(files)}
             </div>
-                       <h3 onClick={() => setShowModifiedFiles(prev => !prev)}>
+            <h3 onClick={() => setShowModifiedFiles(prev => !prev)} style={{ cursor: 'pointer', marginTop: '20px' }}>
                 {showModifiedFiles ? 'Hide' : 'Show'} Modified Files
             </h3>
             {showModifiedFiles && renderModifiedFiles()}
-            
-            <h3 onClick={() => setShowConversations(prev => !prev)}>
+
+            <h3 onClick={() => setShowConversations(prev => !prev)} style={{ cursor: 'pointer', marginTop: '20px' }}>
                 {showConversations ? 'Hide' : 'Show'} Conversations
             </h3>
             {showConversations && renderConversations()}
-
-        </>
+        </div>
     );
 };
 

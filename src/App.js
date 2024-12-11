@@ -27,14 +27,30 @@ const App = () => {
 
     return (
         <div style={{ display: 'flex' }}>
-            <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
+            <div style={{}}>
                 <DirectorySelector 
                     setFiles={setFiles} 
                     setDirectoryPath={setDirectoryPath}
                 />
-                <button onClick={startNewChat} style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#1e1e1e', color: '#ffffff', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%' }}>
-                    Start New Chat
-                </button>
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <button onClick={startNewChat} style={{ 
+                        backgroundColor: '#007BFF',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 20px',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        width: '80%',
+                        transition: 'background-color 0.3s ease',
+                        }}
+                        onMouseEnter={(e) => (e.target.style.backgroundColor = '#0056b3')}
+                        onMouseLeave={(e) => (e.target.style.backgroundColor = '#007BFF')}
+                        >
+
+                        Start New Chat
+                    </button>
+                </div>
                 <Sidebar
                     files={files}
                     setFiles={setFiles}

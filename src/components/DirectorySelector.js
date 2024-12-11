@@ -51,8 +51,22 @@ const DirectorySelector = ({ setFiles, setDirectoryPath }) => {
     }, [selectedDirectory, setFiles]);
 
     return (
-        <div style={{ marginBottom: '20px' }}> {/* Space below the button */}
-            <button onClick={handleDirectorySelection} style={{ backgroundColor: '#1e1e1e', color: '#ffffff', border: 'none', borderRadius: '4px', padding: '10px', cursor: 'pointer', transition: 'background-color 0.3s' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <button
+                onClick={handleDirectorySelection}
+                style={{
+                    backgroundColor: '#007BFF',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#0056b3')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = '#007BFF')}
+            >
                 Select Directory
             </button>
         </div>
